@@ -29,7 +29,7 @@ void readconfig(const char* path) {
 	conf.open(path, std::ios::in);
 
 	//Introduce multine /**/ comments
-	//bool ismultiline;
+	bool ismultiline;
 
 	if (conf.is_open()) {
 		while(conf.good()) {
@@ -38,7 +38,16 @@ void readconfig(const char* path) {
 
 			std::string line(buf);
 
-			if (line.find("#") != line.npos) line.erase(line.find_first_of("#"));
+			//Multi-line commentary
+			if (line.find("/*")) ismultiline = true;
+			if (line.find("*/")) {
+				if (line.find_first_of("*/") != line.npos) line.erase(line.find_first_of("*/"));
+				ismultiline = false;
+			}
+			if (ismultiline) continue;
+
+			//Remove single line comments and empty columns
+			// if (line.find("#") != line.npos) line.erase(line.find_first_of("#"));
 			if (line.find("//") != line.npos) line.erase(line.find_first_of("//"));
 			if (line.empty()) continue;
 
