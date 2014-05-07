@@ -15,7 +15,6 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
 #include <fstream>
 #include <string>
 #include <algorithm>
@@ -24,21 +23,13 @@
 //In case you want to use the config externally
 std::map<std::string, std::string> Config;
 
-int main(int argc, char* argv[]) {
-
-	const char* path; //Where can we find the config?
-	if ( argc != 2 ) {
-		std::cout << "usage: " << argv[0] << " filename" << std::endl;
-		std::cout << "Setting config path to default (schema.conf)" << std::endl;
-		path = "schema.conf";
-	} else {
-		//Set config path!
-		path = argv[1];
-	}
-
+void readconfig(const char* path) {
 	//Open a filestream for our config file
 	std::fstream conf;
 	conf.open(path, std::ios::in);
+
+	//Introduce multine /**/ comments
+	//bool ismultiline;
 
 	if (conf.is_open()) {
 		while(conf.good()) {
@@ -47,7 +38,8 @@ int main(int argc, char* argv[]) {
 
 			std::string line(buf);
 
-			if (line.find('#') != line.npos) line.erase(line.find_first_of('#'));
+			if (line.find("#") != line.npos) line.erase(line.find_first_of("#"));
+			if (line.find("//") != line.npos) line.erase(line.find_first_of("//"));
 			if (line.empty()) continue;
 
 			if (line.find("=") != line.npos) {
@@ -70,13 +62,5 @@ int main(int argc, char* argv[]) {
 
 	//Close config
 	conf.close();
-
-	//Print the config
-	std::map<std::string, std::string>::iterator iterator;
-	for (iterator = Config.begin(); iterator != Config.end(); iterator++) {
-		std::cout << iterator->first << " = " << iterator->second << std::endl;
-	}
-
-	return 0;
 }
 
