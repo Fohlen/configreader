@@ -30,13 +30,11 @@ void readconfig(const char* path) {
 
 	//Introduce multine /**/ comments
 	bool ismultiline;
+	std::string line;
 
 	if (conf.is_open()) {
 		while(conf.good()) {
-			char buf[256];
-			conf.getline(buf, 256, '\n');
-
-			std::string line(buf);
+			std::getline(conf, line, '\n');
 
 			//Multi-line commentary
 			if (line.find("/*")) ismultiline = true;
